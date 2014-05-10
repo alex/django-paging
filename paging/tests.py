@@ -1,7 +1,6 @@
-import unittest2
+import unittest
 
-from paging.helpers import paginate
-from paging.paginators import *
+from paging.paginators import BetterPaginator, EndlessPaginator
 
 from django.conf import settings
 
@@ -14,14 +13,14 @@ if not settings.configured:
         ]
     )
 
-class PagingUnitTest(unittest2.TestCase):
+class PagingUnitTest(unittest.TestCase):
     def test_better_paginator(self):
         objects = range(1, 100)
-        
+
         paginator = BetterPaginator(objects, 1)
         for num in objects:
             page = paginator.get_context(num)
-            self.assertEquals(page['objects'], [num])
+            self.assertEquals(list(page['objects']), [num])
             self.assertEquals(page['has_next'], num < 99)
             self.assertEquals(page['has_previous'], num > 1)
             self.assertEquals(page['is_first'], num == 1)
@@ -35,7 +34,7 @@ class PagingUnitTest(unittest2.TestCase):
 
     def test_endless_paginator(self):
         objects = range(1, 100)
-        
+
         paginator = EndlessPaginator(objects, 1)
         for num in objects:
             page = paginator.get_context(num)

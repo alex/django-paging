@@ -5,7 +5,7 @@ __all__ = ('BetterPaginator', 'InvalidPage', 'PageNotAnInteger', 'EmptyPage', 'E
 class BetterPaginator(Paginator):
     """
     An enhanced version of the QuerySetPaginator.
-    
+
     >>> my_objects = BetterPaginator(queryset, 25)
     >>> page = 1
     >>> context = {
@@ -15,16 +15,16 @@ class BetterPaginator(Paginator):
     def get_context(self, page, range_gap=5):
         try:
             page = int(page)
-        except (ValueError, TypeError), exc:
-            raise InvalidPage, exc
-        
+        except (ValueError, TypeError) as exc:
+            raise InvalidPage(exc)
+
         try:
             paginator = self.page(page)
         except EmptyPage:
             return {
                 'EMPTY_PAGE': True,
             }
-        
+
         if page > 5:
             start = page-range_gap
         else:
@@ -48,7 +48,7 @@ class BetterPaginator(Paginator):
             'is_first': page == 1,
             'is_last': page == self.num_pages,
         }
-        
+
         return context
 
 class EndlessPage(Page):
@@ -56,10 +56,10 @@ class EndlessPage(Page):
         super(EndlessPage, self).__init__(*args, **kwargs)
         self._has_next = self.paginator.per_page < len(self.object_list)
         self.object_list = self.object_list[:self.paginator.per_page]
-    
+
     def has_next(self):
         return self._has_next
-    
+
 class EndlessPaginator(BetterPaginator):
     def page(self, number):
         "Returns a Page object for the given 1-based page number."
@@ -85,7 +85,7 @@ class EndlessPaginator(BetterPaginator):
     def get_context(self, page):
         try:
             paginator = self.page(page)
-        except (PageNotAnInteger, EmptyPage), exc:
+        except (PageNotAnInteger, EmptyPage):
             return {'EMPTY_PAGE': True}
 
         context = {
@@ -99,5 +99,5 @@ class EndlessPaginator(BetterPaginator):
             'has_pages': paginator.has_next() or paginator.has_previous(),
             'is_last': not paginator.has_next(),
         }
-        
+
         return context

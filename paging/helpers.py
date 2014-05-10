@@ -5,9 +5,9 @@ def paginate(request, queryset_or_list, per_page=25, endless=True):
         paginator_class = EndlessPaginator
     else:
         paginator_class = BetterPaginator
-    
+
     paginator = paginator_class(queryset_or_list, per_page)
-    
+
     query_dict = request.GET.copy()
     if 'p' in query_dict:
         del query_dict['p']
